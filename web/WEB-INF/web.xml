@@ -12,6 +12,9 @@
         <jsp-property-group>
             <display-name>template1</display-name>
             <url-pattern>/WEB-INF/addAccountBox.jsp</url-pattern>
+            <url-pattern>/WEB-INF/listAccounts.jsp</url-pattern>
+            <url-pattern>/WEB-INF/showAccount.jsp</url-pattern>
+            <url-pattern>/uploadFile.jsp</url-pattern>
             <url-pattern>/index.jsp</url-pattern>
             <page-encoding>UTF-8</page-encoding>
             <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>

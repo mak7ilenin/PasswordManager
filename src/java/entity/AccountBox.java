@@ -22,9 +22,11 @@ public class AccountBox implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private String urlLogin;
     private String urlPassword;
     private String url;
+    private Picture picture;
 
     public AccountBox() {
     }
@@ -99,9 +101,34 @@ public class AccountBox implements Serializable {
         return true;
     }
 
+   
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Picture getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Picture picture) {
+        this.picture = picture;
+    }
+
     @Override
     public String toString() {
-        return "AccountBox{" + "id=" + id + ", urlLogin=" + urlLogin + ", urlPassword=" + urlPassword + ", url=" + url + '}';
+        return "AccountBox{" 
+                + "id=" + id 
+                + ", name=" + name 
+                + ", urlLogin=" + urlLogin 
+                + ", urlPassword=" + urlPassword 
+                + ", url=" + url 
+                + ", picture=" + picture.getDescription()
+                + '}';
     }
 
    

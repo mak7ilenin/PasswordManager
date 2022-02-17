@@ -5,13 +5,18 @@
  */
 package servlets;
 
+import entity.AccountBox;
+import entity.Picture;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.AccountBoxFacade;
+import session.PictureFacade;
 
 /**
  *
@@ -20,11 +25,15 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "MyServlet", urlPatterns = {
     "/addAccountBox",
     "/createAccountBox",
+    "/listAccounts",
+    "/showAccount"
+    
     
         
 })
 public class MyServlet extends HttpServlet {
-
+    @EJB AccountBoxFacade accountBoxFacade;
+    @EJB PictureFacade pictureFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,25 +50,72 @@ public class MyServlet extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/addAccountBox":
+                List<Picture> pictures = pictureFacade.findAll();
+                request.setAttribute("pictures", pictures);
                 request.getRequestDispatcher("/WEB-INF/addAccountBox.jsp").forward(request, response);
                 break;
             
             case "/createAccountBox":
+                String name = request.getParameter("name");
+                String picture = request.getParameter("picture");
                 String url = request.getParameter("url");
                 String urlLogin = request.getParameter("urlLogin");
                 String urlPassword = request.getParameter("urlPassword");
-                if(url.isEmpty() || urlLogin.isEmpty() || urlPassword.isEmpty()){
+                if(picture.isEmpty() || name.isEmpty() || url.isEmpty() || urlLogin.isEmpty() || urlPassword.isEmpty()){
                     request.setAttribute("info", "Заполните все поля");
+                    request.setAttribute("name", name);
+                    request.setAttribute("picture", picture);
                     request.setAttribute("url", url);
                     request.setAttribute("urlLogin", urlLogin);
                     request.setAttribute("urlPassword", urlPassword);
                     request.getRequestDispatcher("/addAccountBox").forward(request, response);
                     break;
                 }
-                
-                request.getRequestDispatcher("/addAccountBox").forward(request, response);
+                Picture pic = null;
+                try {
+                    pic = pictureFacade.find(Long.parseLong(picture));
+                    AccountBox accountBox = new AccountBox();
+                    accountBox.setName(name);
+                    accountBox.setPicture(pic);
+                    accountBox.setUrl(url);
+                    accountBox.setUrlLogin(urlLogin);
+                    accountBox.setUrlPassword(urlPassword);
+                    accountBoxFacade.create(accountBox);
+                    request.setAttribute("info", "Данные записаны успешно");
+                    request.getRequestDispatcher("/addAccountBox").forward(request, response);
+                } catch (Exception e) {
+                    request.setAttribute("info", "Заполните все поля");
+                    request.setAttribute("name", name);
+                    request.setAttribute("picture", picture);
+                    request.setAttribute("url", url);
+                    request.setAttribute("urlLogin", urlLogin);
+                    request.setAttribute("urlPassword", urlPassword);
+                    request.getRequestDispatcher("/addAccountBox").forward(request, response);
+                    break;
+                }
                 break;
-            
+            case "/listAccounts":
+                List<AccountBox> listAccounts = accountBoxFacade.findAll();
+                request.setAttribute("listAccounts", listAccounts);
+                request.getRequestDispatcher("/WEB-INF/listAccounts.jsp").forward(request, response);
+                break;
+            case "/showAccount":
+                String accountId = request.getParameter("accountId");
+                if(accountId != null && accountId.isEmpty()){
+                    request.setAttribute("info", "Неверный запрос");
+                    request.getRequestDispatcher("/listAccounts").forward(request, response);
+                    break;
+                }
+                try {
+                    AccountBox ab = accountBoxFacade.find(Long.parseLong(accountId));
+                    request.setAttribute("accountBox", ab);
+                } catch (Exception e) {
+                    request.setAttribute("info", "Неверный запрос");
+                    request.getRequestDispatcher("/listAccounts").forward(request, response);
+                    break;
+                }
+                request.getRequestDispatcher("/WEB-INF/showAccount.jsp").forward(request, response);
+                break;
         }
     }
 
