@@ -7,10 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="album py-5 bg-light">
     <div class="container d-flex justify-content-center">
-        <div class="card shadow-sm m-1"  style="width: 15rem;">
-            <img src="pic/${accountBox.picture}" style="width:15rem; height: 12rem;">
+        <div class="card shadow-sm m-1"  style="width: 25rem;">
+            <img src="insertFile/${accountBox.picture.pathToFile}" style="width:25rem;">
             <div class="card-body">
-                <p class="card-header">${accountBox.name}</p>
+                <h2 class="card-header">${accountBox.name}</h2>
                 <p class="card-text">Логин: ${accountBox.urlLogin}</p>
                 <p class="card-text">Парль: ${accountBox.urlPassword}</p>
           </div>
