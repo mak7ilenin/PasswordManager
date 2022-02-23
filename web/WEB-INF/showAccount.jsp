@@ -8,11 +8,12 @@
 <div class="album py-5 bg-light">
     <div class="container d-flex justify-content-center">
         <div class="card shadow-sm m-1"  style="width: 25rem;">
+            <a href="removeAccount?id=${accountBox.picture.id}">x</a>
             <img src="insertFile/${accountBox.picture.pathToFile}" style="width:25rem;">
             <div class="card-body">
                 <h2 class="card-header">${accountBox.name}</h2>
                 <p class="card-text">Логин: ${accountBox.urlLogin}</p>
-                <p class="card-text">Парль: ${accountBox.urlPassword}</p>
+                <p class="card-text">Пароль: ${accountBox.urlPassword}</p>
           </div>
         </div>
     </div>

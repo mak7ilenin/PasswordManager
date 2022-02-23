@@ -7,6 +7,7 @@ package servlets;
 
 import entity.AccountBox;
 import entity.Picture;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.ejb.EJB;
@@ -26,7 +27,8 @@ import session.PictureFacade;
     "/addAccountBox",
     "/createAccountBox",
     "/listAccounts",
-    "/showAccount"
+    "/showAccount",
+    "/removeAccount"
     
     
         
@@ -115,6 +117,17 @@ public class MyServlet extends HttpServlet {
                     break;
                 }
                 request.getRequestDispatcher("/WEB-INF/showAccount.jsp").forward(request, response);
+                break;
+            case "/removeAccount":
+                String id = request.getParameter("id");
+                AccountBox accountBox = accountBoxFacade.find(Long.parseLong(id));
+//                Picture pictureDelete = accountBox.getPicture();
+                File file = new File(accountBox.getPicture().getPathToFile());
+                file.delete();
+//                pictureFacade.remove(accountBox.getPicture());
+                accountBoxFacade.remove(accountBox);
+                request.setAttribute("info", "Удален аккаунт: " + accountBox.getName());
+                request.getRequestDispatcher("/listAccounts").forward(request, response);
                 break;
         }
     }
