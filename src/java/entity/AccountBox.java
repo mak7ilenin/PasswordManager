@@ -7,10 +7,12 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -26,6 +28,7 @@ public class AccountBox implements Serializable {
     private String urlLogin;
     private String urlPassword;
     private String url;
+    @OneToOne(cascade = CascadeType.REMOVE)
     private Picture picture;
 
     public AccountBox() {

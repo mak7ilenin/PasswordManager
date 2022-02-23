@@ -63,6 +63,7 @@ public class UploadServlet extends HttpServlet {
                 .filter( part -> "file".equals(part.getName()))
                 .collect(Collectors.toList());
                 String imagesFolder = "D:\\UploadDir\\WebPasswordManager";
+//                String imagesFolder = ResourceBundle.getBundle("resouces/directories").getString("uploadDir");
                 for(Part filePart : fileParts){
                     String pathToFile = imagesFolder + File.separatorChar
                                     +getFileName(filePart);
@@ -83,6 +84,7 @@ public class UploadServlet extends HttpServlet {
                     picture.setPathToFile(pathToFile);
                     pictureFacade.create(picture);
                 }    
+                request.setAttribute("info", "Файл успешно сохранен");
                 request.getRequestDispatcher("/uploadFile.jsp").forward(request, response);
                 break;
             
