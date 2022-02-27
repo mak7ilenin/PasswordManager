@@ -7,6 +7,7 @@ package servlets;
 
 import entity.AccountBox;
 import entity.Picture;
+import entity.User;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -16,27 +17,28 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import session.AccountBoxFacade;
 import session.PictureFacade;
+import session.UserFacade;
 
 /**
  *
  * @author Melnikov
  */
-@WebServlet(name = "MyServlet", urlPatterns = {
+@WebServlet(name = "MyServlet",urlPatterns = {
     "/addAccountBox",
     "/createAccountBox",
     "/listAccounts",
     "/showAccount",
     "/removeAccount",
         
-    
-    
-        
 })
 public class MyServlet extends HttpServlet {
     @EJB AccountBoxFacade accountBoxFacade;
     @EJB PictureFacade pictureFacade;
+    @EJB UserFacade userFacade;
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -50,6 +52,20 @@ public class MyServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession(false);
+        if(session == null){
+            request.setAttribute("info", "Авторизуйтесь");
+            request.getRequestDispatcher("/showLogin").forward(request, response);
+            return;
+        }
+        //Authentification
+        User authUser = (User) session.getAttribute("authUser");
+        if(authUser == null){
+            request.setAttribute("info", "Авторизуйтесь");
+            request.getRequestDispatcher("/showLogin").forward(request, response);
+            return;
+        }
+        
         String path = request.getServletPath();
         switch (path) {
             case "/addAccountBox":
@@ -83,7 +99,10 @@ public class MyServlet extends HttpServlet {
                     accountBox.setUrl(url);
                     accountBox.setUrlLogin(urlLogin);
                     accountBox.setUrlPassword(urlPassword);
-                    accountBoxFacade.create(accountBox);
+                    authUser = userFacade.find(authUser.getId());
+                    authUser.getListAccountBox().add(accountBox);
+                    userFacade.edit(authUser);
+                    session.setAttribute("authUser", authUser);
                     request.setAttribute("info", "Данные записаны успешно");
                     request.getRequestDispatcher("/addAccountBox").forward(request, response);
                 } catch (Exception e) {
@@ -98,8 +117,7 @@ public class MyServlet extends HttpServlet {
                 }
                 break;
             case "/listAccounts":
-                List<AccountBox> listAccounts = accountBoxFacade.findAll();
-                request.setAttribute("listAccounts", listAccounts);
+                request.setAttribute("listAccounts", authUser.getListAccountBox());
                 request.getRequestDispatcher("/WEB-INF/listAccounts.jsp").forward(request, response);
                 break;
             case "/showAccount":
@@ -121,17 +139,25 @@ public class MyServlet extends HttpServlet {
                 break;
             case "/removeAccount":
                 String id = request.getParameter("id");
-                AccountBox accountBox = accountBoxFacade.find(Long.parseLong(id));
-//                Picture picDelete = accountBox.getPicture();
-//                String imagesFolder = ResourceBundle.getBundle("resouces/directories").getString("uploadDir");
-                File file = new File(accountBox.getPicture().getPathToFile());
-                file.delete();
-//                pictureFacade.remove(accountBox.getPicture());
-                accountBoxFacade.remove(accountBox);
-                request.setAttribute("info", "Удален аккаунт: "+accountBox.getName());
+                try {
+                    for(AccountBox accountBox : authUser.getListAccountBox()){
+                        if(accountBox.getId().equals(Long.parseLong(id))){
+                            File file = new File(accountBox.getPicture().getPathToFile());
+                            file.delete();
+                            authUser.getListAccountBox().remove(accountBox);
+                            request.setAttribute("info", "Удален аккаунт: "+accountBox.getName());
+                            break;
+                        }
+                    }
+                    userFacade.edit(authUser);
+                } catch (Exception e) {
+                    request.setAttribute("info", "Удаление не удалось");
+                }
                 request.getRequestDispatcher("/listAccounts").forward(request, response);
                 break;
+            
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

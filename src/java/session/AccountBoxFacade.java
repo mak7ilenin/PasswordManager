@@ -28,5 +28,7 @@ public class AccountBoxFacade extends AbstractFacade<AccountBox> {
     public AccountBoxFacade() {
         super(AccountBox.class);
     }
+
+   
     
 }
