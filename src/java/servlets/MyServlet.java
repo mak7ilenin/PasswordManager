@@ -65,7 +65,6 @@ public class MyServlet extends HttpServlet {
             request.getRequestDispatcher("/showLogin").forward(request, response);
             return;
         }
-        
         String path = request.getServletPath();
         switch (path) {
             case "/addAccountBox":
@@ -73,7 +72,6 @@ public class MyServlet extends HttpServlet {
                 request.setAttribute("pictures", pictures);
                 request.getRequestDispatcher("/WEB-INF/addAccountBox.jsp").forward(request, response);
                 break;
-            
             case "/createAccountBox":
                 String name = request.getParameter("name");
                 String picture = request.getParameter("picture");
@@ -99,6 +97,7 @@ public class MyServlet extends HttpServlet {
                     accountBox.setUrl(url);
                     accountBox.setUrlLogin(urlLogin);
                     accountBox.setUrlPassword(urlPassword);
+                    accountBoxFacade.create(accountBox);
                     authUser = userFacade.find(authUser.getId());
                     authUser.getListAccountBox().add(accountBox);
                     userFacade.edit(authUser);
@@ -117,6 +116,7 @@ public class MyServlet extends HttpServlet {
                 }
                 break;
             case "/listAccounts":
+                authUser=(User) session.getAttribute("authUser");
                 request.setAttribute("listAccounts", authUser.getListAccountBox());
                 request.getRequestDispatcher("/WEB-INF/listAccounts.jsp").forward(request, response);
                 break;
@@ -142,14 +142,17 @@ public class MyServlet extends HttpServlet {
                 try {
                     for(AccountBox accountBox : authUser.getListAccountBox()){
                         if(accountBox.getId().equals(Long.parseLong(id))){
+                            authUser.getListAccountBox().remove(accountBox);
+                            userFacade.edit(authUser);
+                            accountBoxFacade.remove(accountBox);
+                            session.setAttribute("authUser", authUser);
                             File file = new File(accountBox.getPicture().getPathToFile());
                             file.delete();
-                            authUser.getListAccountBox().remove(accountBox);
                             request.setAttribute("info", "Удален аккаунт: "+accountBox.getName());
                             break;
                         }
                     }
-                    userFacade.edit(authUser);
+                    
                 } catch (Exception e) {
                     request.setAttribute("info", "Удаление не удалось");
                 }
