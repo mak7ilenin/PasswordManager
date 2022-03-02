@@ -34,9 +34,9 @@ public class LoginServlet extends HttpServlet {
         super.init(); //To change body of generated methods, choose Tools | Templates.
         if(userFacade.count()>0) return;
         User user = new User();
-        user.setFirstName("Juri");
-        user.setLastName("Melnikov");
-        user.setPhone("545454545");
+        user.setFirstName("Maksim");
+        user.setLastName("Dzjubenko");
+        user.setPhone("53005207");
         user.setLogin("admin");
         user.setPassword("12345");
         user.setListAccountBox(new ArrayList<>());

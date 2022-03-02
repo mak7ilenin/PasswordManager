@@ -14,7 +14,7 @@
                 <h2 class="card-header">${accountBox.name}</h2>
                 <p class="card-text">${accountBox.url}</p>
                 <p class="card-text">Логин: ${accountBox.urlLogin}</p>
-                <p class="card-text">Парль: ${accountBox.urlPassword}</p>
+                <p class="card-text">Пароль: ${accountBox.urlPassword}</p>
           </div>
         </div>
     </div>

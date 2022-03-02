@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.imageio.ImageIO;
