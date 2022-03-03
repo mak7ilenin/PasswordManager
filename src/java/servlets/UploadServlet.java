@@ -87,6 +87,7 @@ public class UploadServlet extends HttpServlet {
                 }    
                 request.setAttribute("info", "Файл успешно сохранен");
                 request.getRequestDispatcher("/uploadFile.jsp").forward(request, response);
+                
                 break;
             
         }

@@ -1,5 +1,6 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<link rel="stylesheet" href="uploadFileCss.css">
 <div class="album py-5 bg-light">
     <div class="container d-flex justify-content-center">
         <div class="card shadow-sm m-1"  style="width: 35rem;">

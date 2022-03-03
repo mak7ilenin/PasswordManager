@@ -21,9 +21,11 @@ import session.UserFacade;
  *
  * @author jvm
  */
+
 @WebServlet(name = "LoginServlet",loadOnStartup = 1, urlPatterns = {
     "/showLogin",
-    "/login"
+    "/index",
+    "/signUp"
 })
 public class LoginServlet extends HttpServlet {
     @EJB UserFacade userFacade;
@@ -32,7 +34,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
-        if(userFacade.count()>0) return;
+        if(userFacade.count()>1) return;
         User user = new User();
         user.setFirstName("Maksim");
         user.setLastName("Dzjubenko");
@@ -41,7 +43,19 @@ public class LoginServlet extends HttpServlet {
         user.setPassword("12345");
         user.setListAccountBox(new ArrayList<>());
         userFacade.create(user);
-    }
+        
+        
+        User user1 = new User();
+        user1.setFirstName("Daniil");
+        user1.setLastName("Vasilek");
+        user1.setPhone("55558888");
+        user1.setLogin("dan");
+        user1.setPassword("123");
+        user1.setListAccountBox(new ArrayList<>());
+        userFacade.create(user1);
+    } 
+        
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -58,9 +72,9 @@ public class LoginServlet extends HttpServlet {
          String path = request.getServletPath();
         switch (path) {
             case "/showLogin":
-                request.getRequestDispatcher("/showLogin.jsp").forward(request, response);
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;
-            case "/login":
+            case "/index":
                 String login = request.getParameter("login");
                 String password = request.getParameter("password");
                 //Authentification
@@ -80,6 +94,10 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("authUser", authUser);
                 request.setAttribute("info", "Привет, "+authUser.getFirstName());
                 request.getRequestDispatcher("/listAccounts").forward(request, response);
+                break;
+            case "/signUp":
+                HttpSession session1 = request.getSession(true);
+                request.getRequestDispatcher("/signUp.jsp").forward(request, response);
                 break;
         }
     }

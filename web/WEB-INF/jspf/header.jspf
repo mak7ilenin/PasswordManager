@@ -11,5 +11,5 @@
     </head>
     <body>
         <c:import url="/WEB-INF/menu.jsp"></c:import>
-        <div class="container-fluid">
+        <div class="container-fluid"  style="margin-top: 80px" >
             <p class="my-3 w-100 d-flex justify-content-center text-info">${info}&nbsp;</p>
