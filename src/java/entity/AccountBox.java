@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import tools.SimmetricCript;
 
 /**
  *
@@ -26,10 +27,11 @@ public class AccountBox implements Serializable {
     private Long id;
     private String name;
     private String urlLogin;
-    private String urlPassword;
+    private byte[] urlPassword;
     private String url;
     @OneToOne(cascade = CascadeType.REMOVE)
     private Picture picture;
+    private SimmetricCript sc = new SimmetricCript();
 
     public AccountBox() {
     }
@@ -52,11 +54,11 @@ public class AccountBox implements Serializable {
     }
 
     public String getUrlPassword() {
-        return urlPassword;
+        return sc.getCript(urlPassword);
     }
 
     public void setUrlPassword(String urlPassword) {
-        this.urlPassword = urlPassword;
+        this.urlPassword = sc.setCript(urlPassword);
     }
 
     public String getUrl() {
@@ -128,7 +130,6 @@ public class AccountBox implements Serializable {
                 + "id=" + id 
                 + ", name=" + name 
                 + ", urlLogin=" + urlLogin 
-                + ", urlPassword=" + urlPassword 
                 + ", url=" + url 
                 + ", picture=" + picture.getDescription()
                 + '}';

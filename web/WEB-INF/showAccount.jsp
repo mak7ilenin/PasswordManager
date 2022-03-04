@@ -12,7 +12,7 @@
             <img src="insertFile/${accountBox.picture.pathToFile}" style="width:25rem;">
             <div class="card-body">
                 <h2 class="card-header">${accountBox.name}</h2>
-                <p class="card-text">${accountBox.url}</p>
+                <p class="card-text"><a href="${accountBox.url}" target="blank">${accountBox.url}</a></p>
                 <p class="card-text">Логин: ${accountBox.urlLogin}</p>
                 <p class="card-text">Парль: ${accountBox.urlPassword}</p>
           </div>

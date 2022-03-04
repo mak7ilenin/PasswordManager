@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import session.UserFacade;
+import tools.PasswordProtected;
 
 /**
  *
@@ -23,7 +24,10 @@ import session.UserFacade;
  */
 @WebServlet(name = "LoginServlet",loadOnStartup = 1, urlPatterns = {
     "/showLogin",
-    "/login"
+    "/login",
+    "/logout",
+    "/showRegistration",
+    "/registration",
 })
 public class LoginServlet extends HttpServlet {
     @EJB UserFacade userFacade;
@@ -38,7 +42,11 @@ public class LoginServlet extends HttpServlet {
         user.setLastName("Melnikov");
         user.setPhone("545454545");
         user.setLogin("admin");
-        user.setPassword("12345");
+        PasswordProtected passwordProtected = new PasswordProtected();
+        String salt = passwordProtected.getSalt();
+        user.setSalt(salt);
+        String password = passwordProtected.getProtectedPassword("12345", salt);
+        user.setPassword(password);
         user.setListAccountBox(new ArrayList<>());
         userFacade.create(user);
     }
@@ -71,6 +79,9 @@ public class LoginServlet extends HttpServlet {
                     break;
                 }
                 //Authorization
+                String salt = authUser.getSalt();
+                PasswordProtected passwordProtected = new PasswordProtected();
+                password = passwordProtected.getProtectedPassword(password, salt);
                 if(!password.equals(authUser.getPassword())){
                     request.setAttribute("info", "Неверный логин или пароль");
                     request.getRequestDispatcher("/showLogin").forward(request, response);
@@ -80,6 +91,62 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("authUser", authUser);
                 request.setAttribute("info", "Привет, "+authUser.getFirstName());
                 request.getRequestDispatcher("/listAccounts").forward(request, response);
+                break;
+            case "/logout":
+                session = request.getSession(false);
+                if(session != null){
+                    session.invalidate();
+                    request.setAttribute("info", "Вы вышли");
+                }
+                request.getRequestDispatcher("/listAccounts").forward(request, response);
+                break;
+            case "/showRegistration":
+                request.getRequestDispatcher("/showRegistration.jsp").forward(request, response);
+                break;
+            case "/registration":
+                String firstName = request.getParameter("firstName");
+                String lastName = request.getParameter("lastName");
+                String phone = request.getParameter("phone");
+                login = request.getParameter("login");
+                String password1 = request.getParameter("password1");
+                String password2 = request.getParameter("password2");
+                if(!password1.equals(password2)){
+                    request.setAttribute("firstName", firstName);
+                    request.setAttribute("lastName", lastName);
+                    request.setAttribute("phone", phone);
+                    request.setAttribute("login", login);
+                    request.setAttribute("info", "Пароли не совпадают");
+                    request.getRequestDispatcher("/showRegistration").forward(request, response);
+                    break;
+                }
+                if("".equals(firstName)
+                        || "".equals(lastName)
+                        || "".equals(phone)
+                        || "".equals(login)
+                        || "".equals(password1)
+                        || "".equals(password2)
+                        ){
+                    request.setAttribute("firstName", firstName);
+                    request.setAttribute("lastName", lastName);
+                    request.setAttribute("phone", phone);
+                    request.setAttribute("login", login);
+                    request.setAttribute("info", "Заполните все поля");
+                    request.getRequestDispatcher("/showRegistration").forward(request, response);
+                    break;
+                }
+                User newUser = new User();
+                newUser.setFirstName(firstName);
+                newUser.setLastName(lastName);
+                newUser.setPhone(phone);
+                newUser.setLogin(login);
+                passwordProtected = new PasswordProtected();
+                salt = passwordProtected.getSalt();
+                newUser.setSalt(salt);
+                password1 = passwordProtected.getProtectedPassword(password1, salt);
+                newUser.setPassword(password1);
+                userFacade.create(newUser);
+                request.setAttribute("info", "Привет, "+newUser.getFirstName()+"! Авторизуйтесь");
+                request.getRequestDispatcher("/showLogin").forward(request, response);
                 break;
         }
     }

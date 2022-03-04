@@ -6,7 +6,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>listAccounts</welcome-file>
     </welcome-file-list>
     <jsp-config>
         <jsp-property-group>
@@ -16,6 +16,7 @@
             <url-pattern>/WEB-INF/showAccount.jsp</url-pattern>
             <url-pattern>/uploadFile.jsp</url-pattern>
             <url-pattern>/showLogin.jsp</url-pattern>
+            <url-pattern>/showRegistration.jsp</url-pattern>
             <url-pattern>/index.jsp</url-pattern>
             <page-encoding>UTF-8</page-encoding>
             <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>

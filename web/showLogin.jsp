@@ -15,6 +15,7 @@
           <small id="password" hidden class="form-text text-muted">Error</small>
         </div>
         <input class="btn btn-primary mt-5" type="submit" value="Войти">
+        <h4 class="w-100 text-center my-3"><a href="showRegistration">Зарезистрироваться</a></h4>
       </div>
     </form>
 </div>
