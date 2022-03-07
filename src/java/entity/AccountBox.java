@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import tools.SimmetricCript;
 
 /**
@@ -27,13 +28,15 @@ public class AccountBox implements Serializable {
     private Long id;
     private String name;
     private String urlLogin;
-    private byte[] urlPassword;
+    private String urlPassword;
     private String url;
     @OneToOne(cascade = CascadeType.REMOVE)
     private Picture picture;
-    private SimmetricCript sc = new SimmetricCript();
+    @Transient
+    private SimmetricCript sc;
 
     public AccountBox() {
+        sc = new SimmetricCript();
     }
     
     
@@ -54,11 +57,11 @@ public class AccountBox implements Serializable {
     }
 
     public String getUrlPassword() {
-        return sc.getCript(urlPassword);
+        return sc.decrypt(urlPassword);
     }
 
     public void setUrlPassword(String urlPassword) {
-        this.urlPassword = sc.setCript(urlPassword);
+        this.urlPassword = sc.encrypt(urlPassword);
     }
 
     public String getUrl() {
