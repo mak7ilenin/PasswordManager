@@ -1,22 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import entity.User;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.*;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,20 +10,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.bind.DatatypeConverter;
 import session.UserFacade;
 import tools.PasswordProtected;
 
 /**
  *
- * @author jvm
+ * @author makso
  */
 @WebServlet(name = "LoginServlet",loadOnStartup = 1, urlPatterns = {
-    "/showLogin",
-    "/login",
+    "/showIndex",
+    "/index",
     "/logout",
-    "/showRegistration",
-    "/registration",
+    "/showSignUp",
+    "/signUp",
 })
 public class LoginServlet extends HttpServlet {
     @EJB UserFacade userFacade;
@@ -46,19 +31,32 @@ public class LoginServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
-        if(userFacade.count()>0) return;
-        User user = new User();
-        user.setFirstName("Juri");
-        user.setLastName("Melnikov");
-        user.setPhone("545454545");
-        user.setLogin("admin");
-        PasswordProtected passwordProtected = new PasswordProtected();
-        String salt = passwordProtected.getSalt();
-        user.setSalt(salt);
-        String password = passwordProtected.getProtectedPassword("12345", salt);
-        user.setPassword(password);
-        user.setListAccountBox(new ArrayList<>());
-        userFacade.create(user);
+        if(userFacade.count()>0) return;    
+        User user1 = new User();
+        user1.setFirstName("Maksim");
+        user1.setLastName("Dzjubenko");
+        user1.setPhone("53334005");
+        user1.setMoney(122.2);
+        user1.setLogin("admin");
+        PasswordProtected passwordProtected1 = new PasswordProtected();
+        String salt1 = passwordProtected1.getSalt();
+        user1.setSalt(salt1);
+        String adminPassword = passwordProtected1.getProtectedPassword("12345", salt1);
+        user1.setPassword(adminPassword);
+        userFacade.create(user1);
+        
+        User user2 = new User();
+        user2.setFirstName("Daniel");
+        user2.setLastName("Monjane");
+        user2.setPhone("54429827");
+        user2.setMoney(185);
+        user2.setLogin("dan");
+        PasswordProtected passwordProtected2 = new PasswordProtected();
+        String salt2 = passwordProtected2.getSalt();
+        user2.setSalt(salt2);
+        String secUserPassword = passwordProtected2.getProtectedPassword("123", salt2);
+        user2.setPassword(secUserPassword);
+        userFacade.create(user2);
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -75,17 +73,17 @@ public class LoginServlet extends HttpServlet {
          request.setCharacterEncoding("UTF-8");
          String path = request.getServletPath();
         switch (path) {
-            case "/showLogin":
-                request.getRequestDispatcher("/showLogin.jsp").forward(request, response);
+            case "/showIndex":
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;
-            case "/login":
+            case "/index":
                 String login = request.getParameter("login");
                 String password = request.getParameter("password");
                 //Authentification
                 User authUser = userFacade.findByLogin(login);
                 if(authUser == null){
                     request.setAttribute("info", "Неверный логин или пароль");
-                    request.getRequestDispatcher("/showLogin").forward(request, response);
+                    request.getRequestDispatcher("/showIndex").forward(request, response);
                     break;
                 }
                 //Authorization
@@ -94,13 +92,13 @@ public class LoginServlet extends HttpServlet {
                 password = passwordProtected.getProtectedPassword(password, salt);
                 if(!password.equals(authUser.getPassword())){
                     request.setAttribute("info", "Неверный логин или пароль");
-                    request.getRequestDispatcher("/showLogin").forward(request, response);
+                    request.getRequestDispatcher("/showIndex").forward(request, response);
                     break;
                 }
                 HttpSession session = request.getSession(true);
                 session.setAttribute("authUser", authUser);
                 request.setAttribute("info", "Привет, "+authUser.getFirstName());
-                request.getRequestDispatcher("/listAccounts").forward(request, response);
+                request.getRequestDispatcher("/showIndex").forward(request, response);
                 break;
             case "/logout":
                 session = request.getSession(false);
@@ -108,15 +106,20 @@ public class LoginServlet extends HttpServlet {
                     session.invalidate();
                     request.setAttribute("info", "Вы вышли");
                 }
-                request.getRequestDispatcher("/listAccounts").forward(request, response);
+                request.getRequestDispatcher("/listModels").forward(request, response);
                 break;
-            case "/showRegistration":
-                request.getRequestDispatcher("/showRegistration.jsp").forward(request, response);
+            case "/showSignUp":
+                request.getRequestDispatcher("/WEB-INF/showSignUp.jsp").forward(request, response);
                 break;
-            case "/registration":
+            case "/signUp":
                 String firstName = request.getParameter("firstName");
                 String lastName = request.getParameter("lastName");
                 String phone = request.getParameter("phone");
+                String moneyStr = request.getParameter("money");
+                double money = 0;
+                if (moneyStr != null && moneyStr.length() > 0) {
+                    money = Double.parseDouble(moneyStr);
+                }
                 login = request.getParameter("login");
                 String password1 = request.getParameter("password1");
                 String password2 = request.getParameter("password2");
@@ -124,30 +127,34 @@ public class LoginServlet extends HttpServlet {
                     request.setAttribute("firstName", firstName);
                     request.setAttribute("lastName", lastName);
                     request.setAttribute("phone", phone);
+                    request.setAttribute("money", money);
                     request.setAttribute("login", login);
                     request.setAttribute("info", "Пароли не совпадают");
-                    request.getRequestDispatcher("/showRegistration").forward(request, response);
+                    request.getRequestDispatcher("/showSignUp").forward(request, response);
                     break;
                 }
-                if("".equals(firstName)
-                        || "".equals(lastName)
-                        || "".equals(phone)
-                        || "".equals(login)
-                        || "".equals(password1)
-                        || "".equals(password2)
+                if(firstName.isEmpty()
+                        || lastName.isEmpty()
+                        || phone.isEmpty()
+                        || money <= 1
+                        || login.isEmpty()
+                        || password1.isEmpty()
+                        || password2.isEmpty()
                         ){
                     request.setAttribute("firstName", firstName);
                     request.setAttribute("lastName", lastName);
                     request.setAttribute("phone", phone);
+                    request.setAttribute("money", money);
                     request.setAttribute("login", login);
-                    request.setAttribute("info", "Заполните все поля");
-                    request.getRequestDispatcher("/showRegistration").forward(request, response);
+                    request.setAttribute("info", "Одно или несколько полей не заполнены!");
+                    request.getRequestDispatcher("/showSignUp").forward(request, response);
                     break;
                 }
                 User newUser = new User();
                 newUser.setFirstName(firstName);
                 newUser.setLastName(lastName);
                 newUser.setPhone(phone);
+                newUser.setMoney(money);
                 newUser.setLogin(login);
                 passwordProtected = new PasswordProtected();
                 salt = passwordProtected.getSalt();
@@ -155,8 +162,8 @@ public class LoginServlet extends HttpServlet {
                 password1 = passwordProtected.getProtectedPassword(password1, salt);
                 newUser.setPassword(password1);
                 userFacade.create(newUser);
-                request.setAttribute("info", "Привет, "+newUser.getFirstName()+"! Авторизуйтесь");
-                request.getRequestDispatcher("/showLogin").forward(request, response);
+                request.setAttribute("info", "Приветсвуем вас, "+newUser.getFirstName()+"! Авторизуйтесь");
+                request.getRequestDispatcher("/showIndex").forward(request, response);
                 break;
         }
     }

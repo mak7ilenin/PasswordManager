@@ -5,17 +5,17 @@
  */
 package session;
 
-import entity.AccountBox;
+import entity.Model;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author pupil
  */
 @Stateless
-public class AccountBoxFacade extends AbstractFacade<AccountBox> {
+public class ModelFacade extends AbstractFacade<Model> {
 
     @PersistenceContext(unitName = "WebPasswordManagerPU")
     private EntityManager em;
@@ -25,10 +25,8 @@ public class AccountBoxFacade extends AbstractFacade<AccountBox> {
         return em;
     }
 
-    public AccountBoxFacade() {
-        super(AccountBox.class);
+    public ModelFacade() {
+        super(Model.class);
     }
-
-   
     
 }

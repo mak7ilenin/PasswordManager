@@ -5,17 +5,17 @@
  */
 package session;
 
-import entity.Picture;
+import entity.Gain;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author jvm
+ * @author pupil
  */
 @Stateless
-public class PictureFacade extends AbstractFacade<Picture> {
+public class GainFacade extends AbstractFacade<Gain> {
 
     @PersistenceContext(unitName = "WebPasswordManagerPU")
     private EntityManager em;
@@ -25,8 +25,8 @@ public class PictureFacade extends AbstractFacade<Picture> {
         return em;
     }
 
-    public PictureFacade() {
-        super(Picture.class);
+    public GainFacade() {
+        super(Gain.class);
     }
     
 }
