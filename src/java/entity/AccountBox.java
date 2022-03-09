@@ -14,7 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import tools.SimmetricCript;
+import tools.SymmetricCrypt;
 
 /**
  *
@@ -33,10 +33,10 @@ public class AccountBox implements Serializable {
     @OneToOne(cascade = CascadeType.REMOVE)
     private Picture picture;
     @Transient
-    private SimmetricCript sc;
+    private final SymmetricCrypt sc;
 
     public AccountBox() {
-        sc = new SimmetricCript();
+        sc = new SymmetricCrypt();
     }
     
     
@@ -69,7 +69,7 @@ public class AccountBox implements Serializable {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.url = this.addProtocolToUrl(url);
     }
 
     @Override
@@ -138,5 +138,23 @@ public class AccountBox implements Serializable {
                 + '}';
     }
 
-   
+   private String addProtocolToUrl(String url){
+       String pathern1 = "http://";
+       String pathern2 = "https://";
+       String localhost = "localhost";
+       String subStr1 = url.substring(0, 7);
+       String subStr2 = url.substring(0, 8);
+       String subStr3 = url.substring(0, 9);
+       
+       if(subStr1.equals(pathern1) || subStr2.equals(pathern2)){
+           return url;
+       }else{
+           if(subStr3.equals(localhost)){
+               url = pathern1+url;
+               return url;
+           }
+           url = pathern2+url;
+           return url;
+       }
+   }
 }

@@ -30,17 +30,14 @@ import javax.crypto.spec.IvParameterSpec;
  *
  * @author Melnikov
  */
-public class SimmetricCript  implements Serializable{
+public class SymmetricCrypt  implements Serializable{
     
-    private SecureRandom random;
-    private byte[] rnd;
-    private IvParameterSpec ivSpec;
     private byte[] enc;
     private static SecretKey key;
     private Cipher cipher;
-    private final String pathToFileSecret = "secret";
+    private final String pathToFileSecret = "webpasswordmanagersecret";
 
-    public SimmetricCript() {
+    public SymmetricCrypt() {
         init();
     }
     
@@ -56,7 +53,7 @@ public class SimmetricCript  implements Serializable{
                 }
             }
         } catch (NoSuchAlgorithmException  ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
         }
     }
     public String encrypt(String text){
@@ -68,7 +65,7 @@ public class SimmetricCript  implements Serializable{
             String encryptedText = encoder.encodeToString(enc);
             return encryptedText;
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
         }
         return null;
     }
@@ -81,7 +78,7 @@ public class SimmetricCript  implements Serializable{
             cipher.init(Cipher.DECRYPT_MODE, key);
             return new String(cipher.doFinal(encryptedTextByte));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException  | NoSuchAlgorithmException | NoSuchPaddingException  ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, "ERROR in SimmetricCript", ex);
         }
         return null;
     }
@@ -92,27 +89,26 @@ public class SimmetricCript  implements Serializable{
             ObjectInputStream ois = new ObjectInputStream(fis);
             return key = (SecretKey) ois.readObject();
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } 
         
     }
     private void saveToFile(SecretKey key) {
-     
             FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(pathToFileSecret);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(key);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, "secter not found", ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, "secter not found", ex);
         } catch (IOException ex) {
-            Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, "secret not available", ex);
+            Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, "secret not available", ex);
         } finally {
             try {
                 fos.close();
             } catch (IOException ex) {
-                Logger.getLogger(SimmetricCript.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SymmetricCrypt.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
