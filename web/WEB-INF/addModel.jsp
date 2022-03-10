@@ -6,8 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="w-100 d-flex justify-content-center">
-    <form action="showAddModel" method="POST" >
-        <div class="card border-0 mb-3" style="width: 40em;">
+    <form action="addModel" method="POST" >
+        <div class="card border-0 mb-3" style="width: 30em;">
             <h2 style="padding-bottom: 50px" class="my-5 w-100 d-flex justify-content-center">Добавление обуви на сайт</h2>
             <div class="form-group">
                 <label for="modelName" class="form-label mt-4">Название</label>

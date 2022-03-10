@@ -16,7 +16,7 @@
                     <small id="password" hidden class="form-text text-muted">Error</small>
                 </div>
                 <input class="btn btn-primary mt-5" type="submit" value="Войти">
-                <a class="btn btn-primary mt-2" href="showSignUp.jsp">Зарегистрироваться</a>
+                <a class="btn btn-primary mt-2" href="showSignUp">Зарегистрироваться</a>
             </div>
         </form>
     </div>

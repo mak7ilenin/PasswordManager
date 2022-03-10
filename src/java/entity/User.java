@@ -22,7 +22,6 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String users;
     private String firstName;
     private String lastName;
     private String phone;
@@ -51,7 +50,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "Клиент: " + "id=" + id 
-                + ", users=" + users 
                 + ", firstName=" + firstName 
                 + ", lastName=" + lastName 
                 + ", phone=" + phone 
@@ -123,13 +121,5 @@ public class User implements Serializable {
 
     public void setMoney(double money) {
         this.money = money;
-    }
-
-    public String getUsers() {
-        return users;
-    }
-
-    public void setUsers(String users) {
-        this.users = users;
     }
 }

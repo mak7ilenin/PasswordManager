@@ -11,13 +11,13 @@
     <jsp-config>
         <jsp-property-group>
             <display-name>template1</display-name>
+            <url-pattern>/WEB-INF/editUser.jsp</url-pattern>
             <url-pattern>/index.jsp</url-pattern>
             <url-pattern>/WEB-INF/showSignUp.jsp</url-pattern>
             <url-pattern>/WEB-INF/editModel.jsp</url-pattern>
             <url-pattern>/WEB-INF/buyModel.jsp</url-pattern>
             <url-pattern>/WEB-INF/addModel.jsp</url-pattern>
             <url-pattern>/WEB-INF/listModels.jsp</url-pattern>
-            <url-pattern>/WEB-INF/editUser</url-pattern>
             <page-encoding>UTF-8</page-encoding>
             <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>
             <include-coda>/WEB-INF/jspf/footer.jspf</include-coda>
